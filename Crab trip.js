@@ -86,14 +86,15 @@ function setup(){
   
 
 	//mistcrab
-	/*
-		mistcrab = new crab (250, 550,70, 60,[232, 223, c],[r,212 ,220 ],H);
+	
+		/*mistcrab = new crab (250, 550,70, 60,[232, 223, c],[r,212 ,220 ],H);
 		
 		c = map (mouseY, 0, 960, 255,0);
 		r = map (mouseX, 0, 960, 255,0);
 		
 		H = map (mouseX, 0, 960, 255,0);
 		*/
+		
 
 
 
@@ -191,7 +192,6 @@ function draw(){
   mistday(myweather);
   clearday(myweather);
   snowday(myweather);
-  console.log(myweather);
   rainday(myweather);
 
 } 
@@ -224,7 +224,7 @@ function cloudday(weather){
   		let crabpos2 = Clouds[count+1].xyvalue();
   		//console.log(Clouds[count+1].xyvalue());
   		if(createnew_crab == true){
-  			//console.log('reach here');
+  			
   			cloudcrab = new cloud_crab(crabpos1[0]-50,crabpos1[1]-50,70, 60,[232, 223,29],[22,212,220],0,arrived);
   			createnew_crab = false;
   		}
@@ -258,7 +258,7 @@ function mistday(weather){
   		mymist[i].changeangle();
   		mymist[i].update();
   	}
- mistcrab.display();
+// mistcrab.display();
 
 
    }
@@ -383,10 +383,10 @@ function buildstatus(counter){
 
 function myCallback(result){
 
-  //console.log(result);
-	//console.log(typeof result);
+  console.log(result);
+	console.log(typeof result);
 	myweather=result.weather[0].main;
-	//console.log(myweather);
+	console.log(myweather);
 }
 
 
@@ -513,7 +513,7 @@ class raindrop{
     ellipse(this.x, this.y, this.r, this.length);
     
     }
-
+//nextxy is Mouse X and Y, when raindrop near the umbrella, make raindrop out of the frame and can drop again
  move(nextx,nexty){
       this.y += this. speed;
       if (this.y > 600) {
@@ -598,6 +598,7 @@ class snow{
 		this.hit = false;
 		this.x += this.xoff;
 		this.y += this.yoff;
+		//make sure when snow out of the frame, it can start over
 		if(this.y + this.w > 600){
 			this.y = random(-200,-10);
 			this.hit = true;
@@ -635,6 +636,8 @@ class backgroundsnow{
 	move(){
 		this.x += this.xoff_background;
 		this.y += this.yoff_background;
+		//make sure when snow out of the frame, it can start over
+
 		if(this.y > 600){
 			this.y = random(-200,-10);
 		}
@@ -671,7 +674,7 @@ class cloud {
 
   move(){
   	this.x -= this.xspeed;
-  	//if cloud disapear in the frame,
+  	//no life is for if cloud disapear in the frame, delete the cloud
   	if(this.x < -100){
       this.nolife = true;
   	}
@@ -691,10 +694,12 @@ class cloud_crab extends crab{
 		super(tempX, tempY, temph, templ, color,tempc,tc);
 		this.arrived = arrived;
 	}
-
+//nextx and nexty is the x y of cloud, I get this used array, see this in the clouday
 	jump(nextx,nexty){
 		this.nextx = nextx;
 		this.nexty = nexty;
+		// make it jump is basically same as make it move, just need to know the speed, the speed can be caculated by 
+		// use the value of x and nextx, y and nexty of clouds.
 		let xspeed = (this.x - this.nextx)/20;
 		let yspeed = (this.y - this.nexty)/20;
 		this.x -= xspeed;
@@ -725,7 +730,7 @@ class umbrella{
     fill(63, 247, 247);
     arc(this.x, this.y, 90, 30, PI, TWO_PI);
   }
-  
+  // nextx, nexty mouseX and Y
   move(nextx,nexty){
     this.x = nextx;
     this.y = nexty;
