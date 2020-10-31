@@ -34,6 +34,8 @@ let myraindrop = [];
 
 
 function preload(){
+
+	//preload the image for snowflake and snowman
 	snowflake1 = loadImage('/05-data/flake2.png');
 	snowflake2 = loadImage('/05-data/flake4.png');
 	snowflake3 = loadImage('/05-data/flake6.png');
@@ -43,6 +45,8 @@ function preload(){
 }
 
 function drawbeach(){
+
+	//use noise to generate a beach
 	noStroke();
 	fill(250,240,180);
  	beginShape();
@@ -170,7 +174,7 @@ function greet() {
 
 function draw(){
 
-  //crab display
+  //crab display if crabdisplay is true
   if(crabdisplay == true){
   	background(201,241,245,200);
   	drawbeach();
@@ -198,43 +202,66 @@ function draw(){
 
 function cloudday(weather){
 	if(weather == "Clouds"){
+
+		//set crabdisplay to false
   		crabdisplay = false;
+
+  		//if the canvas is not cleared, clear the canvas
   	if(cleared == false){
   		clear();
   		cleared = true;
   	}
   	background(201,241,245,200);
+
+  	//a counter to generate cloud 
   	  timer ++;
   	if (timer > random(100, 450)){
+
+  		//pushing new cloud to the clouds array
     	Clouds.push(new cloud());
     	timer = 0;
  	}
  	//console.log(Clouds);
+
+ 	//draw clouds
   	for(i = 0;i<Clouds.length;i++){
   		Clouds[i].display();
   		Clouds[i].move();
+
+  		//if the cloud is out of canvas,shitf it out of the array
   		if(Clouds[i].nolife == true){
   			Clouds.shift();
   		}
   	}
 
-  	//jump
+  	//jump function
+  	/*
+  	if the length of the cloud array is large than two (there are at least two clouds in the canvas), draw the crab (the crab appears)
+  	*/
   	if(Clouds.length > 2){
+
+  		//read the x and y value of the clouds and the next cloud
   		let crabpos1 = Clouds[count].xyvalue();
   		let crabpos2 = Clouds[count+1].xyvalue();
   		//console.log(Clouds[count+1].xyvalue());
+
+  		//check if we need to draw teh crabe, we only draw the crab once (since the draw function keeps on running but we only need one crab)
   		if(createnew_crab == true){
-  			
   			cloudcrab = new cloud_crab(crabpos1[0]-50,crabpos1[1]-50,70, 60,[232, 223,29],[22,212,220],0,arrived);
   			createnew_crab = false;
   		}
   		cloudcrab.display();
   		cloudcrab.jump(crabpos2[0]-50,crabpos2[1]-50);
+  		//check if the crab arrived at the next cloud
   		arrived = cloudcrab.arrive();
   		if(arrived == true){
+
+  			//if the crab arrived, increment the counter count, therefore line 244 will read out the xy value of the next two clouds
   			count += 1;
   			arrived = false;
   		}
+
+  		//if the count if larger than the clouds array size, decrement the count value by 1
   		if(count > Clouds.length){
   			count -= 1;
   		}
@@ -271,15 +298,23 @@ function clearday(weather){
   		cleared = true;
   	}
   	//background(255)
+
+  	//draw beach
   	rectMode(CORNER);
   	noStroke();
   	fill(250,240,180);
   	rect(0,350,960,250);
+
+  	//draw ocean
   	fill(201,241,245,200);
   	rect(0,200,960,150);
   	noStroke();
 	fill(250,160,60);
+
+	//draw sun
 	arc(480, 200, 180, 160, PI, TWO_PI);
+
+	//draw sunlight
 	for (i = 0; i < 11; i++) {
     	r1 = 100;
     	r2 = 180;
@@ -308,17 +343,18 @@ function rainday(weather){
  	background(90,90,90);
  	for (let i = 0; i < 300; i++) {
    		myraindrop[i].display();
+
+   		//take the mouseX and mouseY parameters to check if the raindrop hit the umbrella
    		myraindrop[i].move(mouseX,mouseY);
     }
   	raincrab.display();
   	raincrab.rain();
   	myumbrella.display();
+
+  	//move the umbrella according to mouseX and mouseY
   	myumbrella.move(mouseX,mouseY);
 	}
 }
-	
-		 
-	
 		
 
 function snowday(weather){
@@ -330,12 +366,17 @@ function snowday(weather){
   	}
   	background(90,90,90);
   	snowcrab.display();
+
+  	//only shake the crab if before the crab becomes a snowmane
   	if(stopshake == false){
   		snowcrab.shake();
   	}
+
   	for(let i=0;i<30;i++){
 		snowflake[i].display();
 		snowflake[i].move();
+
+		//check the amount of snowflake hits the ground,increment the buildcounter accordingly
 		if(snowflake[i].isHit() == true){
 			buildcounter += 1;
 		}
@@ -345,8 +386,12 @@ function snowday(weather){
 		background_snow[i].move();
 	}
 	imageMode(CENTER);
+
+	//set the build status according to the buildcounter
 	buildstatus(buildcounter);
-	console.log(buildcounter);
+	//console.log(buildcounter);
+
+	//draw the body of the snowman according to the build trig
 	if(buildtrig1 == true){
 		noStroke();
    		fill(255);
@@ -365,16 +410,24 @@ function snowday(weather){
 }
 
 function buildstatus(counter){
+
+	//if the counter equals to 40 (40 snowflakes hits the ground), set build trig 1 to true (draw the first part of the snowman body)
 	if(counter == 40){
 		buildtrig1 = true;
 		stopshake = true;
 	}
+
+	//if the counter equals to 90 (90 snowflakes hits the ground), set build trig 2 to true (draw the second part of the snowman body)
 	if(counter == 90){
 		buildtrig2 = true;
 	}
+
+	//if the counter equals to 150 (150 snowflakes hits the ground), set build trig 3 to true (draw the third part of the snowman body)
 	if(counter == 150){
 		buildtrig3 = true;
 	}
+
+	////if the counter equals to 210 (210 snowflakes hits the ground), set build trig 4 to true (draw the final part of the snowman body)
 	if(counter == 210){
 		buildtrig4 = true;
 	}
@@ -456,6 +509,8 @@ class crab {
    move(){
    	this.x -= this.speed;
    	cleared = false;
+
+   	//if the crab is out of bound, move it to the start point
    	if (this.x + this.l< 0){
       this.x = 960;
     }
@@ -480,6 +535,8 @@ class crab {
 	   	}
 	}
    rain(){
+
+   	//make the crab move randomly in the rain
     if(this.x < 100){
       this.rainspeed = 5;
     }
@@ -601,9 +658,13 @@ class snow{
 		//make sure when snow out of the frame, it can start over
 		if(this.y + this.w > 600){
 			this.y = random(-200,-10);
+
+			//if the snowflake hit the ground, set this.hit to true
 			this.hit = true;
 		}
 		if(this.x + this.w < 0){
+
+			//if the snow is out of bound in x direction, make it start over
 			this.x = random(0,1200);
 			this.y = random(-200,-10);
 		}
@@ -681,10 +742,14 @@ class cloud {
   }
 
   nolife(){
+
+  	//return the value, so it can be used in other function
   	return this.nolife;
   }
 
   xyvalue(){
+
+  	//return the x y value
   	return[this.x,this.y];
   }
 }
@@ -694,10 +759,11 @@ class cloud_crab extends crab{
 		super(tempX, tempY, temph, templ, color,tempc,tc);
 		this.arrived = arrived;
 	}
-//nextx and nexty is the x y of cloud, I get this used array, see this in the clouday
+//nextx and nexty is the x y of the next cloud,see this in the clouday
 	jump(nextx,nexty){
 		this.nextx = nextx;
 		this.nexty = nexty;
+		
 		// make it jump is basically same as make it move, just need to know the speed, the speed can be caculated by 
 		// use the value of x and nextx, y and nexty of clouds.
 		let xspeed = (this.x - this.nextx)/20;
@@ -710,6 +776,8 @@ class cloud_crab extends crab{
 	}
 
 	arrive(){
+
+		//return the arrive status
 		return this.arrived;
 	}
 }
